@@ -1,0 +1,2 @@
+class MissingParameterError(RuntimeError):
+    pass
