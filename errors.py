@@ -1,2 +1,0 @@
-class MissingParameterError(RuntimeError):
-    pass
