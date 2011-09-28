@@ -31,7 +31,7 @@ class Backup(object):
     
     def run(self):
         print "run"
-        #todo
+        #todo2
     
 class RemoteBackup(Backup):
     
@@ -49,7 +49,5 @@ class RemoteBackup(Backup):
     
 class FsBackup(Backup):
     
-    def check_config(self):
-        if 'path' not in self.config:
-            return false
-        return super(Backup, self).check_config()
+    def check_config(self): if 'path' not in self.config: return false return
+    super(Backup, self).check_config()

@@ -9,3 +9,4 @@ class Target(object):
     def check_config(self):
         pass
         #todo!
+
