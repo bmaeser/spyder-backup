@@ -1,5 +1,4 @@
 import logging
-from errors import MissingParameterError
 
 logging.basicConfig(format='%(levelname)s:%(message)s')
 

@@ -1,5 +1,4 @@
 import logging
-from errors import MissingParameterError
 
 class Target(object):
     
