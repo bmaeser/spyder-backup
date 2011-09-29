@@ -5,34 +5,76 @@ logging.basicConfig(format='%(levelname)s:%(message)s')
 class Backup(object):
     
     def __init__(self, name="", config={}, targets={}, tempdir=""):
+        """ Constructor
+
+        Arguments:
+        name -- the name (identifier) of this backup
+        config -- a dictionary containing all needed data
+        targets -- a dictionary containing all targets
+        tempdir -- the directory where we can store temporary data
+        """
+
         self.name = name
         self.targets = targets
         self.config = config
         self.tempdir = tempdir
         
     def add_target(self, name, target):
+        """ Ads a new target to the target dictionary
+
+        Arguments:
+        name -- the targets name
+        target -- the actual target-object (Subclass of targets.Target)
+        """
+
         self.targets[name] = target
         
     def del_target(self, name):
+        """ Deletes a target from the target dictionary
+
+        Arguments:
+        name -- the targets name
+        """
         del self.targets[name]
 
     def compress(self):
+        """ Creates a tar.gz of the backupfile and deletes the original"""
         pass
         #todo
         
     def fetch(self):
-        print "fetch"
-        #todo!
+        """ Performs the Backup and stores the data in tempdir/filename.
+        This function should be overwritten by the actual implementations.
+
+        Returns True on success, False on failure.
+
+        """
+        return False
+
         
     def push(self, target_name):
+        """ Pushes the file (filename) to the named target.
+
+        Arguments:
+        target_name -- the name of the target to push to
+        """
         print target_name
         #todo
     
     def push_all(self):
+        """ Pushes the file (filename) to ALL targets in the target dictionary
+        """
         for target in self.targets.keys():
             self.push(target)
         
     def check_config(self):
+        """ Checks the if this Backup is FORMAL ok.
+        It will cry (log) a lot if some information is missing.
+
+        Returns True if everthing seems to be ok.
+
+        This function should be overwritten by the actual implementation.
+        """
 
         check_ok = True
 
@@ -57,10 +99,20 @@ class Backup(object):
         return check_ok
 
     def del_tempfile(self):
+        """ Deletes the temporary file in tempdir/filename"""
         pass
         #TODO
     
     def run(self):
+        """ Runs the backup.
+        Actually this function does:
+        1.) check if the backup seems to be sufficient configured
+        2.) check if all targets seem to be sufficient configured 
+        3.) try to fetch the data from the source
+        4.) try to push the data to all targets
+        
+        Returns True if successfull, False if not.  
+        """
         if not self.check_config():
             logging.error('Backup %s could not be started because of ' \
                 'insufficient configuration', self.name)
@@ -81,6 +133,12 @@ class Backup(object):
 class RemoteBackup(Backup):
     
     def __init__(self, ssh_config={}, *args, **kwargs):
+        """ Constructor
+
+        Arguments:
+        ssh_config -- a dictionary containing all needed data
+        and everything needed by the superclass
+        """
         self.ssh_config = ssh_config
         super(RemoteBackup, self).__init__(*args, **kwargs)
         
