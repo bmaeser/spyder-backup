@@ -1,3 +1,4 @@
+import logging
 from errors import MissingParameterError
 
 class Target(object):
@@ -7,6 +8,18 @@ class Target(object):
         
         
     def check_config(self):
-        pass
+        return False
         #todo!
+
+class FTPTarget(Target):
+	pass
+
+class FSTarget(Target):
+	pass
+
+class SSHTarget(Target):
+	pass
+
+class S3Target(Target):
+	pass
 
