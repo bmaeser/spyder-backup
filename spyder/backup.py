@@ -1,10 +1,11 @@
 import logging
+from datetime import date
 
 logging.basicConfig(format='%(levelname)s:%(message)s')
 
 class Backup(object):
     
-    def __init__(self, name="", config={}, targets={}, tempdir=""):
+    def __init__(self, name, config={}, targets={}, tempdir=""):
         """ Constructor
 
         Arguments:
@@ -18,6 +19,11 @@ class Backup(object):
         self.targets = targets
         self.config = config
         self.tempdir = tempdir
+
+        today = date.today()
+        print self.name
+
+        self.filename = "asdf"
         
     def add_target(self, name, target):
         """ Ads a new target to the target dictionary
