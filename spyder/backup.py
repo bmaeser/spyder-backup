@@ -3,7 +3,141 @@ from datetime import date
 
 logging.basicConfig(format='%(levelname)s:%(message)s')
 
+
 class Backup(object):
+
+    def __init__(self, name, sources={}, targets={}, statusfile=None,
+            logfile=None):
+        self.name = name
+        self.sources = sources
+        self.targets = targets
+        self.statusfile = statusfile
+        self.logfile = logfile
+        self.__fetched_files = []
+
+    def fetch(self):
+        for s,t in self.sources.iteritems():
+            pass
+            #TODO
+
+    def push(self):
+        for n,t in self.targets.iteritems():
+            pass
+            #TODO
+
+    def check_configs(self):
+        """ Checks the if all sources and targets are FORMAL ok.
+        It will cry (log) a lot if some information is missing.
+
+        Returns True if everthing seems to be ok.
+        """
+
+        check_ok = True
+
+        #check all targets
+        if len(self.targets) == 0:
+            logging.warning('Backup %s has no targets specified', self.name)
+            check_ok = False
+        else:
+            for n,t in self.targets.iteritems():
+                if not t.check_config():
+                    logging.error('Target %s of Backup %s could not be ' \
+                        'started because of insufficient configuration', n,
+                        self.name)
+                    check_ok = False
+
+        #check all sources
+        if len(self.sources) == 0:
+            logging.warning('Backup %s has no sources specified', self.name)
+            check_ok = False
+        else:
+            for n,s in self.sources.iteritems():
+                if not s.check_config():
+                    logging.error('Source %s of Backup %s could not be ' \
+                        'started because of insufficient configuration', n,
+                        self.name)
+                    check_ok = False
+        return check_ok
+
+    def __writestatus(self, statuscode):
+        """ helper function to write a statuscode into the statusfile
+        0 = everything ok
+        1 = backup is in progress
+        2 = something bad happend, backup failed!
+        """
+        if self.statusfile is not None:
+            print "writing statuscode ############################"
+            f = open(self.statusfile, 'w')
+            f.write(statuscode)
+            f.close()
+
+    def run(self):
+        """ Runs the backup.
+        Actually this function does:
+        1.) check if all sources seem to be sufficient configured
+        2.) check if all targets seem to be sufficient configured 
+        3.) try to fetch the data from the source
+        4.) try to push the data to all targets
+        
+        Returns True if successfull, False if not.  
+        """
+
+        self.__writestatus('1')
+
+        if not self.check_configs():
+            logging.error('Backup %s could not be started because of ' \
+                'insufficient configuration', self.name)
+            self.__writestatus('2')
+            return False
+        
+        if self.fetch():
+            if self.push():
+                self.__writestatus('0')
+                return True
+
+
+        self.__writestatus(2)
+        return False
+
+    def add_target(self, name, target):
+        """ Ads a new target to the target dictionary
+
+        Arguments:
+        name -- the targets name
+        target -- the actual target-object (Subclass of targets.Target)
+        """
+        self.targets[name] = target
+
+    def del_target(self, name):
+        """ Deletes a target from the target dictionary
+
+        Arguments:
+        name -- the targets name
+        """
+        del self.targets[name]
+
+    def add_source(self, name, source):
+        """ Ads a new source to the source dictionary
+
+        Arguments:
+        name -- the source's name
+        target -- the actual source-object (Subclass of source.Source)
+        """
+        self.sources[name] = source
+
+    def del_source(self, name):
+        """ Deletes a target from the target dictionary
+
+        Arguments:
+        name -- the source's name
+        """
+        del self.sources[name]
+
+    
+
+
+
+class Backuppp(object):
     
     def __init__(self, name, config={}, targets={}, tempdir=""):
         """ Constructor
@@ -24,6 +158,8 @@ class Backup(object):
         print self.name
 
         self.filename = "asdf"
+
+        #self.filename = self.name + "_" + date.today().isoformat()
         
     def add_target(self, name, target):
         """ Ads a new target to the target dictionary
