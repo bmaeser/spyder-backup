@@ -2,7 +2,7 @@ import logging
 import os.path
 from datetime import date
 
-logging.basicConfig(format='%(levelname)s:%(message)s')
+#logging.basicConfig(format='%(levelname)s:%(message)s')
 
 class Source(object):
 

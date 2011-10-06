@@ -1,7 +1,7 @@
 import logging
 from datetime import date
 
-logging.basicConfig(format='%(levelname)s:%(message)s')
+
 
 
 class Backup(object):
@@ -14,6 +14,14 @@ class Backup(object):
         self.statusfile = statusfile
         self.logfile = logfile
         self.__fetched_files = []
+
+        #if logfile provided, use logfile, print to stout if not
+        if self.logfile is not None:
+            logging.basicConfig(
+                filename=self.logfile,
+                format= "%(asctime)s [%(levelname)-8s] %(message)s")
+        else:
+            logging.basicConfig(format= "%(asctime)s [%(levelname)-8s] %(message)s")
 
     def fetch(self):
         for s,t in self.sources.iteritems():
@@ -61,12 +69,14 @@ class Backup(object):
 
     def __writestatus(self, statuscode):
         """ helper function to write a statuscode into the statusfile
-        0 = everything ok
-        1 = backup is in progress
-        2 = something bad happend, backup failed!
+
+        Arguments: 
+        statuscode -- a String, representing the actuall status. one of:
+            0 = everything ok
+            1 = backup is in progress
+            2 = something bad happend, backup failed!
         """
         if self.statusfile is not None:
-            print "writing statuscode ############################"
             f = open(self.statusfile, 'w')
             f.write(statuscode)
             f.close()
